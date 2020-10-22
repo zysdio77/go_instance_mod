@@ -1,2 +1,2 @@
 Port: 9992
-Logfile: "out2.log"
+Logfile: "/log/out.log"
