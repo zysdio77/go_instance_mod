@@ -33,7 +33,7 @@ func main() {
 		ff = WriteFile.GAppendWrite(f) //不存在就创建追加写入文件
 	}
 	defer ff.Close() //关闭文件
-	gin.Default()
+	//gin.Default()
 	r := gin.Default()
 	r.POST("/log/receive", func(c *gin.Context) {
 		//c.JSON(200,Ss{"asdfjasldfkj"})
