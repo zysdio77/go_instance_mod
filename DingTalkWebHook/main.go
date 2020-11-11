@@ -27,7 +27,7 @@ func main() {
 	var requestbody RequestBody
 	var result Result
 	requestbody.Msgtype = "text"
-	webhook := "https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxxxxxx724eeee07bxxxxxxxxxx389ee" //在钉钉机器人中找到此地址
+	webhook := "https://oapi.dingtalk.com/robot/send?access_token=xxxxxx2ff65xxxxxxx" //在钉钉机器人中找到此地址
 	r := gin.Default()
 	r.POST("/recieve", func(context *gin.Context) {
 		body, err := ioutil.ReadAll(context.Request.Body)//接收post请求，拿到body中的json
@@ -38,15 +38,19 @@ func main() {
 		}
 
 		status := gjson.Get(string(body), "status").Str //取json中的status的值
-		ct := gjson.GetMany(string(body), "alerts.0.annotations.aliyun", //取多个值返回一个切片
-			"alerts.0.annotations.grafana",
-			"alerts.0.annotations.summary",
+		ct := gjson.GetMany(string(body),
+			"alerts.0.annotations.summary", //取多个值返回一个切片
 			"alerts.0.labels.desc",
 			"alerts.0.annotations.value")
-		c := []string{"阿里云地址：", "监控地址：", "总结：", "单位：", "状态(报警时的触发状态，恢复后的详细状态定请访问：http://10.0.0.66:9090/)："}
+		c := []string{"告警：", "单位：", "状态(报警时的触发状态，恢复后的详细状态定请访问：http://192.168.2.128:9090/"}
 		var bb strings.Builder //字符串拼接
+		if status == "resolved"{
+			status = "故障已解决："
+		} else if status == "firing" {
+			status = "故障警告："
+		}
 		bb.WriteString(status)
-		bb.WriteString("\n")
+		bb.WriteString("\n\n")
 		for i, j := range ct {
 			bb.WriteString(c[i])
 			bb.WriteString(j.Str)
