@@ -1,82 +1,58 @@
 package main
 
 import (
+	"chao/WriteToFile"
 	"chao/count"
 	"chao/lun"
-	"io/ioutil"
+	"chao/readconf"
+	"fmt"
 	"strconv"
 	"strings"
-
-	"fmt"
-	"github.com/spf13/viper"
 
 	"time"
 )
 
-type Config struct {
-	Count int
-}
-type ConfigFile struct {
-	Config
-}
-
 func main() {
-	/////////////读取配置文件/////////////////
-	viper.SetConfigFile("./config.yaml")
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Println(err)
-	}
-	var conf ConfigFile
-	viper.Unmarshal(&conf) //反序列化到结构体
-	/////////////读取配置文件/////////////////
-
+	conf := readconf.ReadConfFile()	//读取配置文件
 	///////////////////初始化轮子/////////////////
 	lunfilename := "./config.json"
 	ag := lun.Luninit(lunfilename)
 	///////////////////初始化轮子/////////////////
 
-	//////////////////////test///////////////////
-	/*
-		//Dispay := count.Base(ag)
-		test := make([][]int,5,5)
-		test[0]=[]int{20,20,2}
-		test[1]=[]int{2,20,2}
-		test[2]=[]int{20,20,20}
-		test[3]=[]int{2,20,3}
-		test[4]=[]int{20,4,2}
-	//fmt.Println("轮：",Dispay)
-	//count.Linechart(ag,Dispay)
-	//fmt.Println(test,ag)
-	//sum := count.Linechart(ag,test)
-	//fmt.Println(ag.Lines,ag.ScoreCfg,ag.ScoreBase)
-	 */
-	//////////////////////////test/////////////////////
+	if WriteToFile.FileExist(conf.OutFile) {
+		WriteToFile.DeleteFile(conf.OutFile)
+	}
+	file := WriteToFile.CreatFile(conf) //打开输出的文件
+	defer file.Close()
 	starttime := time.Now().String()
 	var sum int
+	//////////////////////初始化中奖线总数/////////////////////
+	prizenumsum := make(map[int]map[int]int)	//中奖总数，例如，1中5共多少次
+	scorecfg :=count.ScorecfgToMap(ag)
+	for k,v :=range scorecfg{	//初始化map
+		prizenumsum[k]= make(map[int]int)
+		for i:=1;i<=len(v);i++{
+			prizenumsum[k][i]=0
+		}
+	}
+
+	//fmt.Println(prizenumsum)
 	sum = 0
 	for i := 0; i < conf.Count; i++ {
 		Dispay := count.Base(ag)
 		//fmt.Println("#################################################################################################")
 		//fmt.Println(Dispay)
-		linescore := count.Linechart(ag, Dispay)
+		linescore := count.Linechart(ag, Dispay,conf,file,prizenumsum)
 		sum = sum + linescore
 	}
 	sumfloat := float64(sum)
 	countflaot := float64(conf.Count)
 	spinavgscore := sumfloat / countflaot
 	lineavgscore := spinavgscore / float64(len(ag.Lines))
-	outfile := "out.txt"
 	endtime := time.Now().String()
-	//fmt.Printf("endtime:%v\n",time.Now())
-	///////
-	/*
-		fmt.Printf("scorebase:%v\n",ag.ScoreBase)
-		fmt.Printf("linecount:%v\n",len(ag.Lines))
-		fmt.Printf("score sum: %v\n",sum)
-		fmt.Printf("every spin avg score:%v\n",spinavgscore)
-		fmt.Printf("line avg score:%v\n",lineavgscore)
-	*/
+	linescount:=conf.Assignline[1]-conf.Assignline[0]+1
+	linescountsum := linescount*conf.Count
+	//fmt.Println(float64(sum)/float64(linescountsum))
 	/////////////////////字符串拼接/////////////////////////
 	var b strings.Builder
 	b.WriteString("开始时间：")
@@ -88,8 +64,11 @@ func main() {
 	b.WriteString("scorebase：")
 	b.WriteString(strconv.Itoa(ag.ScoreBase))
 	b.WriteString("\n")
-	b.WriteString("总线数：")
-	b.WriteString(strconv.Itoa(len(ag.Lines)))
+	b.WriteString("中奖线：")
+	b.WriteString(strconv.Itoa(linescount))
+	b.WriteString("\n")
+	b.WriteString("总中奖线：")
+	b.WriteString(strconv.Itoa(linescountsum))
 	b.WriteString("\n")
 	b.WriteString("总得分：")
 	b.WriteString(strconv.Itoa(sum))
@@ -103,12 +82,30 @@ func main() {
 	/////////////////////字符串拼接/////////////////////////
 
 	/////////////////////写入文件/////////////////////////
+	/*
 	data := []byte(b.String())
-	err = ioutil.WriteFile(outfile, data, 0666)
+	err := ioutil.WriteFile(outfile, data, 0666)
 	if err != nil {
 		fmt.Println(err)
 	}
+	 */
+	for v,k := range prizenumsum{
+		//fmt.Println(v,k)
+		for vv,kk := range k{
+			//kk,_ := strconv.ParseFloat(fmt.Sprintf("%.50f",float64(kk)),64)
+			//linescountsum,_ :=strconv.ParseFloat(fmt.Sprintf("%.50f",float64(linescountsum)),64)
+			//avg := kk/linescountsum
+			//avg ,_= strconv.ParseFloat(fmt.Sprintf("%.50f",float64(avg)),64)
+			avg := float64(kk)/float64(linescountsum)
+			avgstr :=strconv.FormatFloat(avg, 'f', -1, 64)
+			data :=fmt.Sprintf("图标%v中%v的次数为%v,平均出现几率：%v\n",v,vv,kk,avgstr)
+			WriteToFile.WriteTOFile(file,data)
+
+		}
+	}
+	WriteToFile.WriteTOFile(file,(b.String()))
 	/////////////////////写入文件/////////////////////////
-	fmt.Printf("%v\n保存文件名为：%v\n", b.String(),outfile)
+	fmt.Println(prizenumsum)
+	fmt.Printf("%v\n详情以保存到文件，名为：%v\n", b.String(),conf.OutFile)
 	time.Sleep(time.Second*3)
 }
