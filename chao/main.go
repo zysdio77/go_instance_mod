@@ -6,12 +6,12 @@ import (
 	"chao/lun"
 	"chao/readconf"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
 
 	"time"
 )
-
 func main() {
 	conf := readconf.ReadConfFile()	//读取配置文件
 	///////////////////初始化轮子/////////////////
@@ -27,6 +27,7 @@ func main() {
 	starttime := time.Now().String()
 	var sum int
 	//////////////////////初始化中奖线总数/////////////////////
+	/*
 	prizenumsum := make(map[int]map[int]int)	//中奖总数，例如，1中5共多少次
 	scorecfg :=count.ScorecfgToMap(ag)
 	for k,v :=range scorecfg{	//初始化map
@@ -35,14 +36,15 @@ func main() {
 			prizenumsum[k][i]=0
 		}
 	}
+	 */
+	prizenumsum,scorecfg := count.ScoreInit(ag)
 
 	//fmt.Println(prizenumsum)
 	sum = 0
+	rand.Seed(time.Now().UnixNano()) //初始化种子一次即可，重复调用可能会产生重复的随机数
 	for i := 0; i < conf.Count; i++ {
 		Dispay := count.Base(ag)
-		//fmt.Println("#################################################################################################")
-		//fmt.Println(Dispay)
-		linescore := count.Linechart(ag, Dispay,conf,file,prizenumsum)
+		linescore := count.Linechart(ag, Dispay,conf,file,prizenumsum,scorecfg)
 		sum = sum + linescore
 	}
 	sumfloat := float64(sum)
@@ -83,29 +85,28 @@ func main() {
 
 	/////////////////////写入文件/////////////////////////
 	/*
-	data := []byte(b.String())
-	err := ioutil.WriteFile(outfile, data, 0666)
-	if err != nil {
-		fmt.Println(err)
-	}
-	 */
 	for v,k := range prizenumsum{
+		sortv := make([]int,0)
+		sortv	= append(sortv, v)
 		//fmt.Println(v,k)
 		for vv,kk := range k{
-			//kk,_ := strconv.ParseFloat(fmt.Sprintf("%.50f",float64(kk)),64)
-			//linescountsum,_ :=strconv.ParseFloat(fmt.Sprintf("%.50f",float64(linescountsum)),64)
-			//avg := kk/linescountsum
-			//avg ,_= strconv.ParseFloat(fmt.Sprintf("%.50f",float64(avg)),64)
-			avg := float64(kk)/float64(linescountsum)
+			avg := float64(kk)/float64(linescountsum)*100
 			avgstr :=strconv.FormatFloat(avg, 'f', -1, 64)
-			data :=fmt.Sprintf("图标%v中%v的次数为%v,平均出现几率：%v\n",v,vv,kk,avgstr)
+			data :=fmt.Sprintf("图标%v中%v的次数为%v,平均出现几率：%v%v \n",v,vv,kk,avgstr,"%")
 			WriteToFile.WriteTOFile(file,data)
-
 		}
+		sort.Ints(sortv)
+		fmt.Println(sortv)
 	}
+
+	 */
+	linescorebase := float64(ag.ScoreBase)/float64(linescount)
+
+	count.PrizeNumSumSort(prizenumsum,file,linescountsum,scorecfg,linescorebase)	//排序后写入文件
 	WriteToFile.WriteTOFile(file,(b.String()))
 	/////////////////////写入文件/////////////////////////
-	fmt.Println(prizenumsum)
+	//fmt.Println(prizenumsum)
 	fmt.Printf("%v\n详情以保存到文件，名为：%v\n", b.String(),conf.OutFile)
+
 	time.Sleep(time.Second*3)
 }

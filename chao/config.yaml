@@ -1,5 +1,5 @@
 config:
-  count: 10  #跑多少次
-  assignline: [0,49] #指定中奖项
+  count: 100000  #跑多少次
+  assignline: [0,0] #指定中奖项
   outfile: "out.txt"  #指定输出文件名
   details: true  #true/false
