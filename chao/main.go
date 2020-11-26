@@ -26,19 +26,9 @@ func main() {
 	defer file.Close()
 	starttime := time.Now().String()
 	var sum int
-	//////////////////////初始化中奖线总数/////////////////////
-	/*
-	prizenumsum := make(map[int]map[int]int)	//中奖总数，例如，1中5共多少次
-	scorecfg :=count.ScorecfgToMap(ag)
-	for k,v :=range scorecfg{	//初始化map
-		prizenumsum[k]= make(map[int]int)
-		for i:=1;i<=len(v);i++{
-			prizenumsum[k][i]=0
-		}
-	}
-	 */
-	prizenumsum,scorecfg := count.ScoreInit(ag)
 
+	//prizenumsum,scorecfg := count.ScoreInit(ag)//初始化中奖线总数
+	prizenumsum,scorecfg := count.ScoreInit2(ag)//初始化中奖线总数
 	//fmt.Println(prizenumsum)
 	sum = 0
 	rand.Seed(time.Now().UnixNano()) //初始化种子一次即可，重复调用可能会产生重复的随机数
@@ -50,10 +40,10 @@ func main() {
 	sumfloat := float64(sum)
 	countflaot := float64(conf.Count)
 	spinavgscore := sumfloat / countflaot
-	lineavgscore := spinavgscore / float64(len(ag.Lines))
 	endtime := time.Now().String()
 	linescount:=conf.Assignline[1]-conf.Assignline[0]+1
 	linescountsum := linescount*conf.Count
+	lineavgscore := sumfloat / float64(linescountsum)
 	//fmt.Println(float64(sum)/float64(linescountsum))
 	/////////////////////字符串拼接/////////////////////////
 	var b strings.Builder
@@ -101,12 +91,11 @@ func main() {
 
 	 */
 	linescorebase := float64(ag.ScoreBase)/float64(linescount)
-
-	count.PrizeNumSumSort(prizenumsum,file,linescountsum,scorecfg,linescorebase)	//排序后写入文件
+	//count.PrizeNumSumSort(prizenumsum,file,linescountsum,scorecfg,linescorebase)	//排序后写入文件
+	count.PrizeNumSumSort2(prizenumsum,file,linescountsum,scorecfg,linescorebase)//降序后后写入文件，中5，中4，中3...
 	WriteToFile.WriteTOFile(file,(b.String()))
 	/////////////////////写入文件/////////////////////////
 	//fmt.Println(prizenumsum)
 	fmt.Printf("%v\n详情以保存到文件，名为：%v\n", b.String(),conf.OutFile)
-
 	time.Sleep(time.Second*3)
 }
