@@ -4,7 +4,9 @@
   },
   "scatter": {
     "type": [21],
-    "mutil": [0, 0, 2, 4, 10]
+    "mutil": [0, 0, 2, 4, 10],
+    "freeTrigger": [0, 0, 2, 4, 10],
+    "freeRerigger": [0, 0, 2, 4, 10]
   },
   "bonus": {
     "type": [22]

@@ -10,6 +10,8 @@ type Config struct {
 	Assignline []int
 	OutFile string
 	Details bool
+	FreeAssignline []int
+	HitScatter int
 }
 type ConfigFile struct {
 	Config
