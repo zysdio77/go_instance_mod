@@ -1,7 +1,7 @@
 config:
   count: 10000000  #跑多少次
-  assignline: [0,0] #指定中奖项
+  assignline: [0,9] #指定中奖项
   outfile: "out.txt"  #指定输出文件名
-  details: false  #true/false
+  debug: false  #true/false
   freeassignline: [1,10] #指定free中奖项
-  hitscatter: 3 #指定几个scatter触发free
+  hitscatter: 3 #指定几
