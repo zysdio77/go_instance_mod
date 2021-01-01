@@ -25,18 +25,28 @@ func main() {
 	prizesummap := handlelogic.InitPrizeSumMap(ScoreCfgMap)
 	freeprizesummap := handlelogic.InitPrizeSumMap(ScoreCfgMap)
 	scattermap := ag.InitScattermap()
+	bonusRollGear :=ag.InitBonusRollGearToMap()
 	scoresum := 0
 	freecountsum:= 0
 	freescoresum := 0
 	for i := 0; i < conf.Count; i++ {
-		gears := ag.Base()
+		gears := ag.Base()	//摇基础轮
 		//gears := ag.TestBase()
+		/////////////////////////free///////////////////
 		freecount , ok :=ag.FreeTrigger(gears,conf,scattermap)
 		if ok {
 			freecount2,freesum :=ag.FreeGames(freecount,conf,scattermap,ScoreCfgMap,freeprizesummap)
 			freecountsum = freecountsum +freecount2
 			freescoresum = freescoresum + freesum
 		}
+		/////////////////////////free///////////////////
+
+		/////////////////////////respin/////////////////
+		bonusindex,ok :=ag.HitRespin(gears,conf)	//是否命中respin
+		if ok {
+			ag.Respin(bonusindex,bonusRollGear,conf)
+		}
+		/////////////////////////respin/////////////////
 		//fmt.Println(scattermutil)
 		sum := ag.CalculateLine(gears,ScoreCfgMap, conf, prizesummap)
 		scoresum = scoresum + sum
@@ -84,5 +94,12 @@ func main() {
 	freelinescorebase :=float64(scorebase) /float64(freelinecount)
 	fmt.Printf("freelinecount:%v,freelinecountsum:%v ,freelinescorebase:%v\n ",freelinecount,freelinecountsum,freelinescorebase)
 	statistics.SortPrizeSumMap(freeprizesummap,ScoreCfgMap,freelinecountsum,freelinescorebase,f,"Free")
+
+
+	///////////////
+	//bonusRollGear :=ag.BonusRollGearToMap()
+	//bonus :=ag.BonusBase(6,bonusRollGear)
+	//fmt.Println("##########respin test########")
+	//ag.Respin(6,bonusRollGear,conf)
 
 }

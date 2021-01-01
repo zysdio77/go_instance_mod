@@ -12,6 +12,8 @@ type Config struct {
 	Debug        bool
 	FreeAssignline []int
 	HitScatter     int
+	Hitbonus int
+	RespinCount int
 }
 type ConfigFile struct {
 	Config
