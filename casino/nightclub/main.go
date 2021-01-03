@@ -29,6 +29,7 @@ func main() {
 	scoresum := 0
 	freecountsum:= 0
 	freescoresum := 0
+	respincount := 0	//respin次数
 	for i := 0; i < conf.Count; i++ {
 		gears := ag.Base()	//摇基础轮
 		//gears := ag.TestBase()
@@ -45,6 +46,7 @@ func main() {
 		bonusindex,ok :=ag.HitRespin(gears,conf)	//是否命中respin
 		if ok {
 			ag.Respin(bonusindex,bonusRollGear,conf)
+			respincount ++
 		}
 		/////////////////////////respin/////////////////
 		//fmt.Println(scattermutil)
@@ -60,8 +62,8 @@ func main() {
 	endtime := time.Now().UnixNano()
 	spendtime := endtime - starttime
 	statistics.SortPrizeSumMap(prizesummap, ScoreCfgMap,linecountsum,linescorebase,f,"Base")
-
 	scatterscoresum :=  statistics.SortScatterSumMap(ag,scattermap,conf,f)
+	probabilityrespin :=float64(respincount) / float64(conf.Count)
 
 
 
@@ -80,6 +82,8 @@ func main() {
 	WriteToFile.WriteTOFile(f,fmt.Sprintf("Free总次数:%v, free总分: %v \n",freecountsum,freescoresum))
 	fmt.Printf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum)
 	WriteToFile.WriteTOFile(f,fmt.Sprintf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum))
+	fmt.Printf("中respin的次数: %v , 中restpin几率: %v%v\n",respincount,probabilityrespin,"%")
+	WriteToFile.WriteTOFile(f,fmt.Sprintf("中respin的次数: %v , 中restpin几率: %v%v\n",respincount,probabilityrespin,"%"))
 	//fmt.Printf("总得分：%v\n",scoresum*scorebase + freescoresum + scatterscoresum)
 
 
