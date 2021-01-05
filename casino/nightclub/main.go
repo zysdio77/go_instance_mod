@@ -30,6 +30,8 @@ func main() {
 	freecountsum:= 0
 	freescoresum := 0
 	respincount := 0	//respin次数
+	respinscoresum := 0
+	grandmap := ag.InitGrandMap()
 	for i := 0; i < conf.Count; i++ {
 		gears := ag.Base()	//摇基础轮
 		//gears := ag.TestBase()
@@ -45,8 +47,9 @@ func main() {
 		/////////////////////////respin/////////////////
 		bonusindex,ok :=ag.HitRespin(gears,conf)	//是否命中respin
 		if ok {
-			ag.Respin(bonusindex,bonusRollGear,conf)
+			respinscores := ag.Respin(bonusindex,bonusRollGear,conf,f,grandmap)
 			respincount ++
+			respinscoresum = respinscoresum+respinscores
 		}
 		/////////////////////////respin/////////////////
 		//fmt.Println(scattermutil)
@@ -64,8 +67,7 @@ func main() {
 	statistics.SortPrizeSumMap(prizesummap, ScoreCfgMap,linecountsum,linescorebase,f,"Base")
 	scatterscoresum :=  statistics.SortScatterSumMap(ag,scattermap,conf,f)
 	probabilityrespin :=float64(respincount) / float64(conf.Count)
-
-
+	grandscore :=ag.ScoreBase*grandmap["grand"]*ag.Others.BonusModel.Mutil.GRAND
 
 	fmt.Printf("用时: %v 秒\n", spendtime/1e9)
 	WriteToFile.WriteTOFile(f,fmt.Sprintf("用时: %v 秒\n", spendtime/1e9))
@@ -80,10 +82,13 @@ func main() {
 
 	fmt.Printf("Free总次数:%v, free总分: %v \n",freecountsum,freescoresum)
 	WriteToFile.WriteTOFile(f,fmt.Sprintf("Free总次数:%v, free总分: %v \n",freecountsum,freescoresum))
-	fmt.Printf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum)
-	WriteToFile.WriteTOFile(f,fmt.Sprintf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum))
-	fmt.Printf("中respin的次数: %v , 中restpin几率: %v%v\n",respincount,probabilityrespin,"%")
-	WriteToFile.WriteTOFile(f,fmt.Sprintf("中respin的次数: %v , 中restpin几率: %v%v\n",respincount,probabilityrespin,"%"))
+	fmt.Printf("中respin的次数: %v , 中restpin几率: %v%v,respin得分: %v\n",respincount,probabilityrespin,"%",respinscoresum)
+	WriteToFile.WriteTOFile(f,fmt.Sprintf("中respin的次数: %v , 中restpin几率: %v%v,respin得分: %v\n",respincount,probabilityrespin,"%",respinscoresum))
+	fmt.Printf("Grand的次数: %v , Grand得分: %v\n",grandmap["grand"],grandscore)
+	WriteToFile.WriteTOFile(f,fmt.Sprintf("Grand的次数: %v , Grand得分: %v\n",grandmap["grand"],grandscore))
+	fmt.Printf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum + respinscoresum+grandscore)
+	WriteToFile.WriteTOFile(f,fmt.Sprintf("Base得分：%v , scatter得分: %v ,总得分：%v \n", scoresum*scorebase,scatterscoresum,scoresum*scorebase + freescoresum + scatterscoresum + respinscoresum+grandscore))
+
 	//fmt.Printf("总得分：%v\n",scoresum*scorebase + freescoresum + scatterscoresum)
 
 
@@ -99,7 +104,7 @@ func main() {
 	fmt.Printf("freelinecount:%v,freelinecountsum:%v ,freelinescorebase:%v\n ",freelinecount,freelinecountsum,freelinescorebase)
 	statistics.SortPrizeSumMap(freeprizesummap,ScoreCfgMap,freelinecountsum,freelinescorebase,f,"Free")
 
-
+	//fmt.Println(grandmap)
 	///////////////
 	//bonusRollGear :=ag.BonusRollGearToMap()
 	//bonus :=ag.BonusBase(6,bonusRollGear)
