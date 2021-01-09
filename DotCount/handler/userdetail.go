@@ -4,6 +4,7 @@ import (
 	"dotcount/modle"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
@@ -14,10 +15,14 @@ func UserDetail(c *gin.Context) {
 	var userdetail UserDetailJson
 	//var userdetaildb modle.UserDataDb
 	tablename := "user_data"
-
 	err := c.ShouldBind(&userdetail)
+
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println()
+		logrus.WithFields(logrus.Fields{
+			"userdetail解析错误: ": err,
+			//"修改的数据 userdata":   userdata,
+		}).Error(c.Request.Method,c.Request.URL)
 		c.JSON(500, gin.H{
 			"result":  "",
 			"message": "",
@@ -36,16 +41,24 @@ func UserDetail(c *gin.Context) {
 			readuserdata := userdata.GormSelectRow(tablename)
 			userdetail.UpdateDetailToData(readuserdata, userdata)
 			userdata.SaveData(tablename)
+			//detail ,_ := json.Marshal(&userdetail)
+			//fmt.Println()
+			//date,_ :=json.Marshal(&userdata)
 			c.JSON(http.StatusOK, gin.H{
 				"result":  "",
 				"message": "update",
 				"status":  "success",
 			})
 		}
+		fmt.Println()
+		logrus.WithFields(logrus.Fields{
+			"接受到数据 userdetail": userdetail,
+			//"修改的数据 userdata":   userdata,
+		}).Info(c.Request.Method,c.Request.URL)
 	}
-	fmt.Printf("userdetail: %v \n", userdetail)
-
+	//fmt.Printf("userdetail: %v \n", userdetail)
 }
+
 func (userdetail *UserDetailJson) HandleNewVersion() string {
 	var extend string
 	if userdetail.Version == "" {
@@ -58,9 +71,9 @@ func (userdetail *UserDetailJson) HandleNewVersion() string {
 func (userdetail *UserDetailJson) HandleVersion(userdata *modle.ReadUserData) string {
 	var extend string
 	versionlist := strings.Split(userdata.Extend, "|")
-	fmt.Printf("versionlist:%v\n", versionlist)
+	//fmt.Printf("versionlist:%v\n", versionlist)
 	versionlist1 := strings.Split(versionlist[1], ",")
-	fmt.Printf("versionlist1:%v\n", versionlist1)
+	//fmt.Printf("versionlist1:%v\n", versionlist1)
 	if len(versionlist1) >= 100 {
 		versionlist1 = versionlist1[1:]
 	}
@@ -68,7 +81,7 @@ func (userdetail *UserDetailJson) HandleVersion(userdata *modle.ReadUserData) st
 	//a := versionlist[1] + "," + versionlist[0]
 	a := strings.Join(versionlist1, ",")
 	extend = fmt.Sprintf("%v|%v", userdetail.Version, a)
-	fmt.Println(extend)
+	//fmt.Println(extend)
 
 	return extend
 }
@@ -88,11 +101,15 @@ func (userdetail *UserDetailJson) NewDetailToData() *modle.WriteUserData {
 	userdata.UserGambling = userdetail.UserGambling
 	userdata.WildStamp = userdetail.WildStamp
 	userdata.UserValue = userdetail.UserValue
-	userdata.LogoutTime = TimeStamp2Date(userdetail.Time)
+	if userdetail.LogoutTime == 0 {
+		userdata.LogoutTime = NowTime()
+	} else {
+		userdata.LogoutTime = TimeStamp2Date(userdetail.LogoutTime)
+	}
 	userdata.GuideF = userdetail.GuideF
 	userdata.GuideNf = userdetail.GuideNF
 	userdata.Extend = userdetail.HandleNewVersion()
-	fmt.Printf("userdata: %v \n", userdata)
+	//fmt.Printf("userdata: %v \n", userdata)
 	return &userdata
 }
 
@@ -165,8 +182,8 @@ func (userdetail *UserDetailJson) UpdateDetailToData(readuserdata *modle.ReadUse
 	} else {
 		userdata.UserValue = readuserdata.UserValue
 	}
-	if userdetail.Time != 0 {
-		userdata.LogoutTime = TimeStamp2Date(userdetail.Time)
+	if userdetail.LogoutTime != 0 {
+		userdata.LogoutTime = TimeStamp2Date(userdetail.LogoutTime)
 	} else {
 		userdata.LogoutTime = readuserdata.LogoutTime
 	}
@@ -185,5 +202,4 @@ func (userdetail *UserDetailJson) UpdateDetailToData(readuserdata *modle.ReadUse
 	} else {
 		userdata.Extend = readuserdata.Extend
 	}
-	fmt.Printf("userdata: %v \n", userdata)
 }

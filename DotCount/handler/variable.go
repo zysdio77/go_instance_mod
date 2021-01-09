@@ -1,9 +1,29 @@
 package handler
 
 type UserDetailJson struct {
+	LogoutTime   int64    `json:"logoutTime" form:"logoutTime"`
+	DevModel     string `json:"devModel" form:"devModel"`
+	Platform     string `json:"platform" form:"platform"`
+	Channel      string `json:"channel" form:"channel"`
+	WildStamp    string `json:"wildStamp" form:"wildStamp"`
+	UserGambling string `json:"userGambling" form:"userGambling"`
+	TotalWin     string `json:"totalWin" form:"totalWin"`
+	TotalBet     string `json:"totalBet" form:"totalBet"`
+	UserValue    string `json:"userValue" form:"userValue"`
+	FreeCoin     string `json:"freeCoin" form:"freeCoin"`
+	Version      string `json:"version" form:"version"`
+	UID          int    `json:"uid" form:"uid,string"`
+	CoinNum      string `json:"coinNum" form:"coinNum"`
+	Vip          int    `json:"vip" form:"vip"`
+	Lv           int    `json:"lv" form:"lv"`
+	GuideF       string `json:"guideF" form:"guideF"`
+	GuideNF      string `json:"guideNF" form:"guideNF"`
+}
+
+type UserDetailJsonRaw struct {
 	Country      string `json:"country" form:"country"`
 	Lang         string `json:"lang" form:"lang"`
-	Time         int64 `json:"time" form:"time"`
+	Time         int64  `json:"time" form:"time"`
 	Udid         string `json:"udid" form:"udid"`
 	Adid         string `json:"adid" form:"adid"`
 	UUID         string `json:"uuid" form:"uuid"`
@@ -34,8 +54,6 @@ type UserDetailJson struct {
 	GuideF       string `json:"guideF" form:"guideF"`
 	GuideNF      string `json:"guideNF" form:"guideNF"`
 }
-
-
 type FreeCoinDetail struct {
 }
 type c struct {

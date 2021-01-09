@@ -44,7 +44,7 @@ type WriteUserData struct {
 	UserGambling string `gorm:"user_gambling"`
 	WildStamp    string `gorm:"wild_stamp"`
 	UserValue    string `gorm:"user_value"`
-	LogoutTime   string `gorm:"logout_time"`
+	LogoutTime   string `gorm:"logout_time"` //logout_time
 	GuideF       string `gorm:"guide_f"`
 	GuideNf      string `gorm:"guide_nf"`
 	InboxDetail  string `gorm:"inbox_detail"`

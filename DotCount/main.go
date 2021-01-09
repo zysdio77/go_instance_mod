@@ -12,5 +12,6 @@ func main()  {
 	defer modle.GDb.Close()
 	//handler.SplitYi("11234567812345678123456781234567812345678")
 	//handler.StringToBigInt("11234567812345678123456781234567812345678")
+	//handler.NowTime()
 	engine.Run(":9090")
 }

@@ -15,9 +15,21 @@ func StringToInt(s string) int {
 	}
 	return i
 }
+func Init64ToInt (int642 int64) int{
+	int2 :=int(int642)
+	return int2
+}
+func IntToString(i int) string {
+	s := strconv.Itoa(i)
+	return s
+}
+func NowTime() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}
 
 func TimeStamp2Date(timestamp int64) string {
-	datetime := time.Unix(timestamp, 0).Format("2006-01-02 15:04:05")
+	haomiao := timestamp/1000
+	datetime := time.Unix(haomiao, 0).Format("2006-01-02 15:04:05")
 	return datetime
 }
 
