@@ -1,7 +1,7 @@
 package handler
 
 type UserDetailJson struct {
-	LogoutTime   int64    `json:"logoutTime" form:"logoutTime"`
+	LogoutTime   int64  `json:"logoutTime" form:"logoutTime"`
 	DevModel     string `json:"devModel" form:"devModel"`
 	Platform     string `json:"platform" form:"platform"`
 	Channel      string `json:"channel" form:"channel"`
@@ -54,9 +54,24 @@ type UserDetailJsonRaw struct {
 	GuideF       string `json:"guideF" form:"guideF"`
 	GuideNF      string `json:"guideNF" form:"guideNF"`
 }
-type FreeCoinDetail struct {
+
+type FreeCoinDataJson struct {
+	Uid             int    `json:"uid" form:"uid"`
+	Channel         string `json:"channel" form:"channel"`
+	Platform        string `json:"platform" form:"platform"`
+	FreeCoinDetails string `json:"freeCoinDetails" form:"freeCoinDetails"`
+	Version         string `json:"version" form:"version"`
 }
-type c struct {
+
+type FreeCoinDetailJson []struct {
+	TimeStamp int64    `json:"timeStamp"`
+	CoinNum   int    `json:"coinNum"`
+	CoinName  string `json:"coinName"`
+}
+type FreeCoinDetailJson2 struct {
+	TimeStamp int64    `json:"timeStamp"`
+	CoinNum   int    `json:"coinNum"`
+	CoinName  string `json:"coinName"`
 }
 type d struct {
 }

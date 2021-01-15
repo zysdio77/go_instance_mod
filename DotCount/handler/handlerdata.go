@@ -2,7 +2,9 @@ package handler
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"math/big"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -31,6 +33,16 @@ func TimeStamp2Date(timestamp int64) string {
 	haomiao := timestamp/1000
 	datetime := time.Unix(haomiao, 0).Format("2006-01-02 15:04:05")
 	return datetime
+}
+func TimeStampToDate(miao int64) string {
+	datetime := time.Unix(miao, 0).Format("2006-01-02 15:04:05")
+	return datetime
+}
+func DateToTimeStamp(date string) int64 {
+	const shortForm = "2006-01-02"
+	t, _ := time.Parse(shortForm, "2021-01-08")
+	//fmt.Println(t,t.Unix())
+	return t.Unix()
 }
 
 func HitSplitYi(str string )bool{
@@ -107,3 +119,45 @@ func Updata(str1 string,str2 string) string {
 	}
 	return str
 }
+
+func HandleNewVersion(version string) string {
+	var extend string
+	if version == "" {
+		extend = fmt.Sprintf("%v|%v", 0, 0)
+	} else {
+		extend = fmt.Sprintf("%v|%v", version, 0)
+	}
+	return extend
+}
+func HandleVersion(jsonversion string,dbversion string) string {
+	//fmt.Printf("jsonversion:%v,dbversion:%v\n",jsonversion,dbversion)
+	var extend string
+	versionlist := strings.Split(dbversion, "|")
+	//fmt.Printf("versionlist:%v\n", versionlist)
+	versionlist1 := strings.Split(versionlist[1], ",")
+	//fmt.Printf("versionlist1:%v\n", versionlist1)
+	if len(versionlist1) >= 100 {
+		versionlist1 = versionlist1[1:]
+		//fmt.Printf("2versionlist1:%v\n", versionlist1[1:])
+	}
+	versionlist1 = append(versionlist1, jsonversion)
+	//fmt.Printf("222versionlist1:%v\n",versionlist1)
+	//a := versionlist[1] + "," + versionlist[0]
+	a := strings.Join(versionlist1, ",")
+	//fmt.Printf("a:%v\n",a)
+	extend = fmt.Sprintf("%v|%v", jsonversion, a)
+	//fmt.Println(extend)
+
+	return extend
+}
+
+func HandleUrlCode(str string) string {
+	s, err := url.QueryUnescape(str)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"Url解码错误：": str,
+		}).Error(err)
+	}
+	return s
+}
+

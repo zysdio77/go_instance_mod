@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"strings"
 )
 
 func UserDetail(c *gin.Context) {
@@ -59,6 +58,7 @@ func UserDetail(c *gin.Context) {
 	//fmt.Printf("userdetail: %v \n", userdetail)
 }
 
+/*
 func (userdetail *UserDetailJson) HandleNewVersion() string {
 	var extend string
 	if userdetail.Version == "" {
@@ -86,6 +86,8 @@ func (userdetail *UserDetailJson) HandleVersion(userdata *modle.ReadUserData) st
 	return extend
 }
 
+ */
+
 func (userdetail *UserDetailJson) NewDetailToData() *modle.WriteUserData {
 	var userdata modle.WriteUserData
 	userdata.Id = userdetail.UID - 10000
@@ -108,7 +110,8 @@ func (userdetail *UserDetailJson) NewDetailToData() *modle.WriteUserData {
 	}
 	userdata.GuideF = userdetail.GuideF
 	userdata.GuideNf = userdetail.GuideNF
-	userdata.Extend = userdetail.HandleNewVersion()
+	//userdata.Extend = userdetail.HandleNewVersion()
+	userdata.Extend = HandleNewVersion(userdetail.Version)
 	//fmt.Printf("userdata: %v \n", userdata)
 	return &userdata
 }
@@ -198,7 +201,8 @@ func (userdetail *UserDetailJson) UpdateDetailToData(readuserdata *modle.ReadUse
 		userdata.GuideNf = readuserdata.GuideNf
 	}
 	if userdetail.Version != "" {
-		userdata.Extend = userdetail.HandleVersion(readuserdata)
+		//userdata.Extend = userdetail.HandleVersion(readuserdata)
+		userdata.Extend = HandleVersion(userdetail.Version,readuserdata.Extend)
 	} else {
 		userdata.Extend = readuserdata.Extend
 	}
