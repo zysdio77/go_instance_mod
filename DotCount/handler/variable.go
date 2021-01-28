@@ -73,11 +73,69 @@ type FreeCoinDetailJson2 struct {
 	CoinNum   int    `json:"coinNum"`
 	CoinName  string `json:"coinName"`
 }
-type d struct {
+
+
+type SlotDetailJson struct {
+	//Country     string `json:"country"`
+	//Lang        string `json:"lang"`
+	Time        int64 `json:"time" form:"time"`
+	//Udid        string `json:"udid"`
+	//Adid        string `json:"adid"`
+	//UUID        string `json:"uuid"`
+	//Idfv        string `json:"idfv"`
+	//Hmac        string `json:"hmac"`
+	//Email       string `json:"email"`
+	//DevModel    string `json:"devModel"`
+	//Brand       string `json:"brand"`
+	IsTestUser  int    `json:"isTestUser" form:"isTestUser"`
+	ClientVer   string `json:"clientVer" form:"clientVer"`
+	ClientBuild string `json:"clientBuild" form:"clientBuild"`
+	OsType      string `json:"osType" form:"osType"`
+	OsVer       string `json:"osVer" form:"osVer"`
+	PackageName string `json:"packageName" form:"packageName"`
+	Platform    string `json:"platform" form:"platform"`
+	Channel     string `json:"channel" form:"channel"`
+	UID         int    `json:"uid" form:"uid"`
+	SlotDetails string `json:"slotDetails" form:"slotDetails"`
+	Version     string    `json:"version" form:"version"`
 }
-type e struct {
+
+type SlotDetails struct {
+	WinNum int    `json:"winNum"`
+	BetNum int    `json:"betNum"`
+	SlotID string `json:"slotId"`
 }
-type f struct {
+
+type PayResultJson struct {
+	SkuID     string `json:"skuID"`
+	Price     int    `json:"price"`
+	PayKey    string `json:"payKey"`
+	PayCoupon int    `json:"payCoupon"`
+	PayDetail string `json:"payDetail"`
+	Tid       string `json:"tid"`
+	UID       int    `json:"uid"`
 }
-type g struct {
+type PayDetails struct {
+	Coin      int64 `json:"coin"`
+	RepeatWin struct {
+		ID     string `json:"id"`
+		From   string `json:"from"`
+		IapKey string `json:"iapKey"`
+	} `json:"RepeatWin"`
+	StoreBlast struct {
+		ID     string `json:"id"`
+		IapKey string `json:"iapKey"`
+	} `json:"StoreBlast"`
+	Picks     int      `json:"picks"`
+	Cn        []string `json:"cn"`
+	Vp        int      `json:"vp"`
+	Sr        int      `json:"sr"`
+	PayMoney  int      `json:"payMoney"`
+	CoinStart int64    `json:"coinStart"`
+	CoinEnd   int64    `json:"coinEnd"`
+	StampNum  string   `json:"stamp_num"`
+	Postmark  struct {
+		Mark int `json:"mark"`
+		Coin int `json:"coin"`
+	} `json:"postmark"`
 }

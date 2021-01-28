@@ -90,10 +90,12 @@ func BigIntToString(b *big.Int) string {
 }
 
 func JoinString(strlist []string) string {
+	//切片拼接成字符串
 	return strings.Join(strlist,"")
 }
 
 func SplitString(str string) []string {
+	//用 ｜ 切割，返回切片
 	return strings.Split(str,"|")
 }
 
@@ -105,7 +107,7 @@ func AddBig(str1 string, str2 string) string {
 }
 
 func Updata(str1 string,str2 string) string {
-	//接受的值位str1，数据库中的值位str2，返回str1+str2得出新值
+	//接受的值为str1，数据库中的值为str2，返回str1+str2得出新值
 	var str string
 	if HitSplitYi(str2) {
 		//数据库的字符串能被8整除
@@ -152,6 +154,7 @@ func HandleVersion(jsonversion string,dbversion string) string {
 }
 
 func HandleUrlCode(str string) string {
+	//处理url编码
 	s, err := url.QueryUnescape(str)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
